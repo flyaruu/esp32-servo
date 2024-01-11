@@ -22,6 +22,43 @@ fn init_heap() {
         ALLOCATOR.init(HEAP.as_mut_ptr() as *mut u8, HEAP_SIZE);
     }
 }
+
+
+// #[entry]
+// fn main() -> ! {
+//     init_heap();
+//     esp_println::logger::init_logger_from_env();
+//     log::info!("Logger is setup");
+
+//     let peripherals = Peripherals::take();
+//     let system = peripherals.SYSTEM.split();
+
+//     let clocks = ClockControl::max(system.clock_control).freeze();
+
+//     let io = IO::new(peripherals.GPIO,peripherals.IO_MUX);
+
+//     let mut pin = io.pins.gpio19.into_push_pull_output();
+//     let mut delay = Delay::new(&clocks);
+//     loop {
+//         info!("1000 ms duty");
+//         for _ in 0..50 {
+//             pin.set_high().unwrap();
+//             delay.delay_us(1000_u32);
+//             pin.set_low().unwrap();
+//             delay.delay_us(19000_u32);
+//         }
+//         info!("2000 ms duty");
+//         for _ in 0..100 {
+//             pin.set_high().unwrap();
+//             delay.delay_us(2000_u32);
+//             pin.set_low().unwrap();
+//             delay.delay_us(18000_u32);
+//         }
+
+//     }
+// }
+
+
 #[entry]
 fn main() -> ! {
     init_heap();
@@ -35,7 +72,7 @@ fn main() -> ! {
 
     let io = IO::new(peripherals.GPIO,peripherals.IO_MUX);
 
-    let red_pin = io.pins.gpio3.into_push_pull_output();
+    let red_pin = io.pins.gpio19.into_push_pull_output();
 
     let mut ledc = LEDC::new(peripherals.LEDC, &clocks);
     ledc.set_global_slow_clock(LSGlobalClkSource::APBClk);
@@ -61,7 +98,7 @@ fn main() -> ! {
 // 50Hz 1000 / 50 = 20ms / 
     // channel0.set_duty_hw(127); // Set duty to 50%
     channel0.set_duty(50).unwrap(); // Set duty to 50%
-    let mut servo: Servo<'_, hal::gpio::GpioPin<Output<PushPull>, 3>, 1000, 2000,14,50> = Servo::new(channel0);
+    let mut servo: Servo<'_, hal::gpio::GpioPin<Output<PushPull>, 19>, 1000, 2000,14,50> = Servo::new(channel0);
     loop {
         info!("Set to 0:");
         servo.set_percentage(0);
